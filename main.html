@@ -72,33 +72,28 @@
     document.body.appendChild(renderer.domElement );
 
     //create the material of the cube (basic material)
-    var material_cube = new THREE.MeshBasicMaterial();
+    var material_sphere = new THREE.MeshBasicMaterial();
     //set the color of the cube
-    material_cube.color=  new THREE.Color(0,1,0);
+    material_sphere.color=  new THREE.Color(0,1,0);
     //then set the renderer to wireframe
-    material_cube.wireframe=true;
+    material_sphere.wireframe=true;
     //create the mesh of a cube
-    var geometry_cube = new THREE.BoxGeometry(2,2,2);
-    var cube = new THREE.Mesh(geometry_cube,material_cube);
-
-    //create the material of the tetrahedron (basic material)
-    var material_tetra = new THREE.MeshBasicMaterial();
-    //set the color of the tetrahedron
-    material_tetra.color=  new THREE.Color(0,0,1);
-    //then set the renderer to wireframe
-    material_tetra.wireframe=true;
-    var geometry_tetra = new THREE.TetrahedronGeometry(2, 0);
-    var tetra = new THREE.Mesh(geometry_tetra,material_tetra);
-
-    //translate base position of the created objects
-    cube.position.x-=2;
-    tetra.position.x+=2;
+    var geometry_sphere = new THREE.SphereGeometry(10, 16, 8);
+    var sphere = new THREE.Mesh(geometry_sphere, material_sphere);
 
     //and add to the scene
-    scene.add(cube);
-    scene.add(tetra);
+    scene.add(sphere);
 
     renderer.render(scene,camera);
+
+      //////////////
+	// CONTROLS //
+	//////////////
+
+	// move mouse and: left   click to rotate,
+	//                 middle click to zoom,
+	//                 right  click to pan
+  // add the new control and link to the current camera to transform its position
 
     var controls = new OrbitControls(camera, renderer.domElement);
 
@@ -111,7 +106,17 @@
 
     requestAnimationFrame(MyUpdateLoop);
 
-    // var 
+    var MyResize = function()
+    {
+        var width = window.innerWidth;
+        var height = window.innerHeight;
+        renderer.setSize(width, height);
+        camera.aspect = width/height;
+        camera.updateProjectionMatrix();
+        renderer.render(scene, camera);
+    };
+
+    window.addEventListener('resize', MyResize);
 
     </script>
   </body>
