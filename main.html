@@ -68,25 +68,58 @@
     //set the size of the rendering window
     renderer.setSize(window.innerWidth,window.innerHeight);
 
-    //add the renderer to the current document
-    document.body.appendChild(renderer.domElement );
-
-    //create the material of the cube (basic material)
-    var material_sphere = new THREE.MeshBasicMaterial();
-    //set the color of the cube
-    material_sphere.color=  new THREE.Color(0,1,0);
-    //then set the renderer to wireframe
-    material_sphere.wireframe=true;
-    //create the mesh of a cube
-    var geometry_sphere = new THREE.SphereGeometry(10, 16, 8);
-    var sphere = new THREE.Mesh(geometry_sphere, material_sphere);
-
-    //and add to the scene
-    scene.add(sphere);
+    
+    setInterval(function(){
+        spawnSphere();
+        requestAnimationFrame(render);
+    }, 1000);
 
     renderer.render(scene,camera);
 
-      //////////////
+    //////////////
+	// FUNCTIONS //
+	//////////////
+
+    var spheres = [];
+
+    function spawnSphere()
+    {
+        //add the renderer to the current document
+        document.body.appendChild(renderer.domElement );
+
+        //create the material of the cube (basic material)
+        var material_sphere = new THREE.MeshBasicMaterial();
+        //set the color of the cube
+        material_sphere.color = new THREE.Color(0,1,0);
+        //then set the renderer to wireframe
+        material_sphere.wireframe=true;
+        //create the mesh of a cube
+        var geometry_sphere = new THREE.SphereGeometry(2, 16, 8);
+        var sphere = new THREE.Mesh(geometry_sphere, material_sphere);
+
+        spheres.push(sphere);
+        //and add to the scene
+        scene.add(sphere);
+    }
+
+    function render(time) {
+        time *= 0.001;
+        spheres.forEach(sphere => {
+            rotate(time, sphere);
+        });
+
+        requestAnimationFrame(render);
+    }
+
+    function rotate(time, sphere)
+    {
+        sphere.rotation.x = time;
+        sphere.rotation.y = time;
+ 
+        renderer.render(scene, camera);
+    }
+
+    //////////////
 	// CONTROLS //
 	//////////////
 
