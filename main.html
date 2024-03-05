@@ -70,9 +70,17 @@
 
     
     setInterval(function(){
-        requestAnimationFrame(timeToSpawnSphere);
-        render();
+        timeToSpawnSphere();
     }, 1000);
+
+    setTimeout(function(){
+        setInterval(function(){
+            removeSphere();
+        }, 1000)
+    }, 30000)
+    
+
+    render();
 
     renderer.render(scene,camera);
 
@@ -82,20 +90,17 @@
 
     var spheres = [];
     var firstSpawnTime = 0;
-    var maxSphere = 2;
+    var maxSphere = 20;
 
-    function timeToSpawnSphere(time)
+    function timeToSpawnSphere()
     {
-        if (maxSphere <= 0) return;
-        if (time / 1000 >= firstSpawnTime)
-        {
-            firstSpawnTime = time / 1000;
-            maxSphere--;
-            spawnSphere();
-        }
+
+        if (spheres.length >= maxSphere) return;
+
+        spawnSphere(Math.random(), new THREE.Vector3(0, 0, 0));
     }
 
-    function spawnSphere()
+    function spawnSphere(size, position)
     {
         //add the renderer to the current document
         document.body.appendChild(renderer.domElement );
@@ -107,21 +112,39 @@
         //then set the renderer to wireframe
         material_sphere.wireframe=true;
         //create the mesh of a cube
-        var geometry_sphere = new THREE.SphereGeometry(2, 8, 4);
+        var geometry_sphere = new THREE.SphereGeometry(size, 8, 4);
         var sphere = new THREE.Mesh(geometry_sphere, material_sphere);
 
-        sphere.position.x += Math.random() * 10; 
+        sphere.position.x = position.x; 
+        sphere.position.y = position.y; 
+        sphere.position.z = position.z; 
 
         spheres.push(sphere);
         //and add to the scene
         scene.add(sphere);
     }
 
+    function rotateAroundOrbit(time, sphere)
+    {
+        var rotY = new THREE.Matrix4();
+        rotY.makeRotationY(Math.PI / 300);
+        var tra = new THREE.Matrix4();
+        tra.makeTranslation(0.05, 0, 0);
+
+        sphere.applyMatrix4(tra);
+        sphere.applyMatrix4(rotY);
+
+        sphere.position.y += 0.005;
+    }
+
     function render(time) {
         time *= 0.001;
-        spheres.forEach(sphere => {
-            rotate(time, sphere);
-        });
+        if (spheres != null)
+        {
+            spheres.forEach(sphere => {
+                rotateAroundOrbit(time, sphere);
+            });
+        }
 
         requestAnimationFrame(render);
     }
@@ -132,6 +155,11 @@
         sphere.rotation.y = time;
  
         renderer.render(scene, camera);
+    }
+
+    function removeSphere()
+    {
+        scene.remove(spheres.shift());
     }
 
     //////////////
