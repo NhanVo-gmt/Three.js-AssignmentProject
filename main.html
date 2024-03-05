@@ -70,8 +70,8 @@
 
     
     setInterval(function(){
-        spawnSphere();
-        requestAnimationFrame(render);
+        requestAnimationFrame(timeToSpawnSphere);
+        render();
     }, 1000);
 
     renderer.render(scene,camera);
@@ -81,6 +81,19 @@
 	//////////////
 
     var spheres = [];
+    var firstSpawnTime = 0;
+    var maxSphere = 2;
+
+    function timeToSpawnSphere(time)
+    {
+        if (maxSphere <= 0) return;
+        if (time / 1000 >= firstSpawnTime)
+        {
+            firstSpawnTime = time / 1000;
+            maxSphere--;
+            spawnSphere();
+        }
+    }
 
     function spawnSphere()
     {
@@ -94,8 +107,10 @@
         //then set the renderer to wireframe
         material_sphere.wireframe=true;
         //create the mesh of a cube
-        var geometry_sphere = new THREE.SphereGeometry(2, 16, 8);
+        var geometry_sphere = new THREE.SphereGeometry(2, 8, 4);
         var sphere = new THREE.Mesh(geometry_sphere, material_sphere);
+
+        sphere.position.x += Math.random() * 10; 
 
         spheres.push(sphere);
         //and add to the scene
